@@ -1,8 +1,8 @@
-const grpc = require('@grpc/grpc-js');
-const protoLoader = require('@grpc/proto-loader');
+import grpc from '@grpc/grpc-js';
+import protoLoader from '@grpc/proto-loader';
 
 // Load proto
-const packageDef = protoLoader.loadSync('sensor.proto');
+const packageDef = protoLoader.loadSync('proto/sensor.proto');
 const proto = grpc.loadPackageDefinition(packageDef).sensor;
 
 // Create client
@@ -15,7 +15,7 @@ function streamSensorData() {
         if (error) {
             console.error('Stream error:', error.message);
             console.log('Retrying in 5 seconds...');
-            setTimeout(streamSensorData, 5000); // Retry after 5 seconds
+            setTimeout(streamSensorData, 5000);
         } else {
             console.log('Server response:', response);
         }
@@ -36,24 +36,23 @@ function streamSensorData() {
             call.write(sensorData);
         } catch (err) {
             console.error('Write error:', err.message);
-            clearInterval(interval); // Stop sending
-            call.end(); // End the broken stream
+            clearInterval(interval);
+            call.end();
             console.log('Retrying in 5 seconds...');
-            setTimeout(streamSensorData, 5000); // Retry after 5 seconds
+            setTimeout(streamSensorData, 5000);
         }
 
         count++;
     }, 1000);
 
-    // Handle call errors (for sudden connection loss)
+    // Handle call errors (like sudden disconnection)
     call.on('error', (err) => {
         console.error('gRPC call error:', err.message);
-        clearInterval(interval); // Stop interval
+        clearInterval(interval);
         console.log('Retrying in 5 seconds...');
         setTimeout(streamSensorData, 5000);
     });
 
-    // Handle call end (stream closed unexpectedly)
     call.on('end', () => {
         console.warn('gRPC call ended');
         clearInterval(interval);
