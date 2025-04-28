@@ -4,7 +4,7 @@ import url from 'url';
 const topics = {};  // Store clients subscribed to each room (device-UUID)
 
 function startWebSocketServer() {
-    const wss = new WebSocketServer({ port: 8080 });
+    const wss = new WebSocketServer({ port: 3000 });
 
     wss.on('connection', (ws, req) => {
         const token = req.headers['authorization'];
