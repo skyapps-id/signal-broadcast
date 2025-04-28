@@ -1,42 +1,14 @@
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
-import { broadcastToDevice } from './websocket.js'; // Notice: .js added
+import streamSensorData from '../handler/grpc/sensor.js';
+import sayHello from '../handler/grpc/hello.js';
 
 // Load protos (from proto/ folder)
-const packageDefinition = protoLoader.loadSync('proto/hello.proto');
-const packageDefinition1 = protoLoader.loadSync('proto/sensor.proto');
+const packageHello = protoLoader.loadSync('proto/hello.proto');
+const packageSensor = protoLoader.loadSync('proto/sensor.proto');
 
-const helloProto = grpc.loadPackageDefinition(packageDefinition).hello;
-const sensorProto = grpc.loadPackageDefinition(packageDefinition1).sensor;
-
-// gRPC handlers
-function sayHello(call, callback) {
-    const name = call.request.name;
-
-    if (!name) {
-        return callback({
-            code: grpc.status.INVALID_ARGUMENT,
-            message: "Name is required",
-        });
-    }
-
-    callback(null, { message: `Hello, ${name}!` });
-}
-
-function streamSensorData(call, callback) {
-    let count = 0;
-
-    call.on('data', (sensorData) => {
-        console.log('Received sensor data:', sensorData);
-        broadcastToDevice("test", sensorData);
-        broadcastToDevice("test123", "sensorData");
-        count++;
-    });
-
-    call.on('end', () => {
-        callback(null, { message: `Received ${count} sensor data points` });
-    });
-}
+const helloProto = grpc.loadPackageDefinition(packageHello).hello;
+const sensorProto = grpc.loadPackageDefinition(packageSensor).sensor;
 
 // Create and start gRPC server
 function startGrpcServer() {
