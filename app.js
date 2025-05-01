@@ -1,5 +1,5 @@
-import { startGrpcServer } from './server/grpc.js';
+import startGrpcClient from './client/grpc.js';
 import { startWebSocketServer } from './server/websocket.js';
 
 startWebSocketServer();
-startGrpcServer();
+startGrpcClient();

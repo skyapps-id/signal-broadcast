@@ -49,7 +49,7 @@ function startWebSocketServer() {
         });
     });
 
-    console.log('WebSocket Server running on ws://localhost:8080');
+    console.log('WebSocket Server running on ws://localhost:3000');
 }
 
 function broadcastToDevice(device_uuid, data) {
