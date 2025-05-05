@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package device_telemetry;
+
+service DeviceTelemetryService {
+  rpc DeviceTelemetry (DeviceTelemetryRequest) returns (stream DeviceTelemetryResponse);
+}
+
+message DeviceTelemetryRequest {
+  string client_id = 1;
+}
+
+message DeviceTelemetryResponse {
+  string device_uuid = 1;
+  string mode = 2;
+  int64 timestamp = 3;
+  string data = 4;
+}
