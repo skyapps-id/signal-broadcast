@@ -2,7 +2,7 @@ import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import { broadcastToDevice } from '../server/websocket.js';
 
-export default function startDeviceTelemetryClient() {
+export function startDeviceTelemetryClient() {
     // Load .proto file
     const packageDefinition = protoLoader.loadSync('proto/device_telemetry.proto', {
         keepCase: true,
@@ -20,7 +20,7 @@ export default function startDeviceTelemetryClient() {
     const call = client.DeviceTelemetry({ device_uuid: 'signal-broadcast' });
 
     call.on('data', (resp) => {
-        console.log(`Received data: ${resp.device_uuid}`);
+        console.log(`Received data device: ${resp.device_uuid} forward to socket`);
         resp.data = JSON.parse(resp.data);
         broadcastToDevice(resp.device_uuid, resp);
     });
